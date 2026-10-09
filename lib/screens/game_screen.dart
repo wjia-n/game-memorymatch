@@ -63,10 +63,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               const Duration(milliseconds: 350), () => a.layDown());
           break;
         case 'win':
-          _onGameOver(won: true);
+          _onGameOver(true);
           break;
         case 'lose':
-          _onGameOver(won: false);
+          _onGameOver(false);
           break;
         case 'tick':
           a.tick();
