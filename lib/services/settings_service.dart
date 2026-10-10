@@ -88,7 +88,7 @@ class MatchSettings extends ChangeNotifier {
   int bestMoves = 0;
   int bestTime = 0;
   int bestStreak = 0;
-  bool isPro = false;
+  bool isPro = true; // everything unlocked — no Pro version
   int reviewPromptedGames = 0;
 
   Map<String, int> customColors = Map.of(_defaultCustomColors);
@@ -170,7 +170,7 @@ class MatchSettings extends ChangeNotifier {
     bestMoves = p.getInt(_kBestMoves) ?? 0;
     bestTime = p.getInt(_kBestTime) ?? 0;
     bestStreak = p.getInt(_kBestStreak) ?? 0;
-    isPro = p.getBool(_kIsPro) ?? false;
+    isPro = true; // everything unlocked
     reviewPromptedGames = p.getInt(_kReviewPrompted) ?? 0;
     for (final k in _defaultCustomColors.keys) {
       customColors[k] = p.getInt('$_kCustomPrefix$k') ?? _defaultCustomColors[k]!;
