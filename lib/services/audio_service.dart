@@ -16,6 +16,9 @@ import 'package:audioplayers/audioplayers.dart';
 ///   resumes exactly where it left off instead of restarting or dying.
 /// - Every public method catches player errors; audio can never crash the app.
 class MatchAudio {
+  /// Per-game pitch character (memorymatch): 0.94x. Makes SFX unique.
+  static const double _pitchMul = 0.940;
+
   static const int _rate = 22050;
   final AudioPlayer _sfx = AudioPlayer();
   final AudioPlayer _music = AudioPlayer();
@@ -97,6 +100,8 @@ class MatchAudio {
 
   List<double> _tone(double freq, double secs,
       {double freqEnd = 0, double attack = 0.02, double harmonics = 0.25}) {
+    freq *= _pitchMul;
+    freqEnd *= _pitchMul;
     final n = (_rate * secs).round();
     final out = List<double>.filled(n, 0);
     for (int i = 0; i < n; i++) {
@@ -167,12 +172,12 @@ class MatchAudio {
       _cache.putIfAbsent(key, () => _wav(build()));
 
   Uint8List _menuBytes() => _clip('music_menu', () {
-        // Warm G – Em – C – D parlor waltz-ish pad, 16s loop.
+        // G# 0 – 5 – 3 – 4 warm pad, 16s loop. Unique to memorymatch.
         final seq = [
-          [196.0, 246.94, 293.66], // G
-          [164.81, 196.0, 246.94], // Em
-          [261.63, 329.63, 392.0], // C
-          [146.83, 293.66, 369.99], // D-ish
+          [207.65, 261.62, 311.12],
+          [349.22, 415.30, 523.25],
+          [277.18, 349.22, 415.30],
+          [311.12, 391.99, 466.16]
         ];
         final out = <double>[];
         for (final chord in seq) {
@@ -181,24 +186,34 @@ class MatchAudio {
         return out;
       });
 
+
   Uint8List _gameBytes() => _clip('music_game', () {
-        // Soft music-box plucks over a warm drone, 12s loop.
-        final drone = _padChord([98.0, 146.83], 12.0);
-        final plucks = [
-          523.25, 587.33, 659.25, 783.99,
-          659.25, 587.33, 523.25, 440.0,
+        // G# waltz 0 – 5 – 3 – 4, 12s loop. Unique to memorymatch.
+        final seq = [
+          [207.65, 261.62, 311.12],
+          [349.22, 415.30, 523.25],
+          [277.18, 349.22, 415.30],
+          [311.12, 391.99, 466.16]
         ];
-        final n = (_rate * 12).round();
-        final out = List<double>.from(drone);
-        for (int k = 0; k < plucks.length; k++) {
-          final start = (n * k / plucks.length).round();
-          final tone = _tone(plucks[k], 0.55, harmonics: 0.4);
-          for (int i = 0; i < tone.length && start + i < n; i++) {
-            out[start + i] += tone[i] * 0.32;
-          }
+        final out = <double>[];
+        for (final chord in seq) {
+          // Waltz: bass on 1, chords on 2 and 3
+          final bass = _tone(chord[0] / 2, 0.8, harmonics: 0.3);
+          final ch1 = _padChord([chord[1], chord[2]], 0.7);
+          final ch2 = _padChord([chord[1], chord[2]], 0.7);
+          out.addAll(bass);
+          final gap1 = List<double>.filled((_rate * 0.2).round(), 0);
+          out.addAll(gap1);
+          out.addAll(ch1);
+          final gap2 = List<double>.filled((_rate * 0.2).round(), 0);
+          out.addAll(gap2);
+          out.addAll(ch2);
+          final gap3 = List<double>.filled((_rate * 0.2).round(), 0);
+          out.addAll(gap3);
         }
         return out;
       });
+
 
   // ------------------------------------------------------------------ SFX
   Future<void> _play(Uint8List bytes) async {
