@@ -6,6 +6,7 @@ import '../theme/match_bits.dart';
 import '../theme/memory_themes.dart';
 import 'custom_theme_screen.dart';
 import 'pro_screen.dart';
+import '../transfer/transfer_ui.dart';
 
 /// Settings: renameable player profile, appearance, audio, custom creators.
 class SettingsScreen extends StatefulWidget {
@@ -378,6 +379,7 @@ class _FaceCreatorScreenState extends State<_FaceCreatorScreen> {
         child: SafeArea(
           child: Column(
             children: [
+              TransferSaveTile(gameSlug: 'memorymatch'),
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
                 child: Row(
