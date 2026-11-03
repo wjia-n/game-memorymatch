@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../engine/memory_engine.dart';
@@ -159,7 +160,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               const Icon(Icons.workspace_premium_rounded,
                                   size: 16, color: Color(0xFF3B2416)),
                               const SizedBox(width: 6),
-                              Text('GO PRO',
+                              Text(defaultTargetPlatform == TargetPlatform.iOS ? '⭐ GOLD STAR' : 'GO PRO',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       color: t.woodEdge,
@@ -183,7 +184,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             Icon(Icons.verified_rounded,
                                 size: 16, color: t.accent),
                             const SizedBox(width: 6),
-                            Text('PRO',
+                            Text(defaultTargetPlatform == TargetPlatform.iOS ? '⭐' : 'PRO',
                                 style: Match.label(13, theme: t)),
                           ],
                         ),
